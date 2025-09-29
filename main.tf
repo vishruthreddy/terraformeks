@@ -2,33 +2,35 @@ provider "aws" {
   region = var.region
 }
 
-# VPC Module
+# -------------------------
+# VPC Module - use existing
+# -------------------------
 module "vpc" {
   source = "./modules/vpc"
-
-  create_vpc   = var.create_vpc
-  vpc_id       = var.vpc_id
-  cidr_block   = var.cidr_block
-  azs          = var.azs
+  vpc_id = var.vpc_id  # existing VPC ID, e.g., "vpc-5a863f32"
 }
 
-# IAM Module
+# -------------------------
+# IAM Module - imported roles
+# -------------------------
 module "iam" {
   source = "./modules/iam"
-
-  create_iam_roles = var.create_iam_roles
-  cluster_role_arn = var.cluster_role_arn
-  node_role_arn    = var.node_role_arn
+  # The IAM roles are already imported:
+  # eksClusterRole and eksNodeRole
 }
 
+# -------------------------
 # EKS Module
+# -------------------------
 module "eks" {
   source = "./modules/eks"
 
   cluster_name    = var.cluster_name
   region          = var.region
-  subnet_ids      = module.vpc.subnet_ids
+
   vpc_id          = module.vpc.vpc_id
-  cluster_role_arn = module.iam.cluster_role_arn
-  node_role_arn    = module.iam.node_role_arn
+  subnet_ids      = module.vpc.subnet_ids
+
+  cluster_role_arn = "arn:aws:iam::<account_id>:role/eksClusterRole"
+  node_role_arn    = "arn:aws:iam::<account_id>:role/eksNodeRole"
 }
