@@ -1,0 +1,41 @@
+resource "aws_iam_role" "cluster_role" {
+  count = var.create_iam_roles ? 1 : 0
+  name  = "eksClusterRole"
+
+  assume_role_policy = data.aws_iam_policy_document.eks_cluster_assume.json
+}
+
+data "aws_iam_policy_document" "eks_cluster_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["eks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "node_role" {
+  count = var.create_iam_roles ? 1 : 0
+  name  = "eksNodeRole"
+
+  assume_role_policy = data.aws_iam_policy_document.eks_node_assume.json
+}
+
+data "aws_iam_policy_document" "eks_node_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+output "cluster_role_arn" {
+  value = var.create_iam_roles ? aws_iam_role.cluster_role[0].arn : var.cluster_role_arn
+}
+
+output "node_role_arn" {
+  value = var.create_iam_roles ? aws_iam_role.node_role[0].arn : var.node_role_arn
+}
