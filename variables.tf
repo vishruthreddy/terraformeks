@@ -16,7 +16,7 @@ variable "cluster_name" {
 variable "vpc_id" {
   description = "Existing VPC ID"
   type        = string
-  default     = "vpc-5a863f32" # 👈 your VPC ID
+  default     = "vpc-5a863f32"
 }
 
 variable "subnet_ids" {
@@ -34,11 +34,11 @@ variable "subnet_ids" {
 variable "cluster_role_arn" {
   description = "IAM role ARN for EKS cluster"
   type        = string
-  default     = "arn:aws:iam::123456789012:role/eksClusterRole" # 👈 replace with your ARN
+  default     = "arn:aws:iam::123456789012:role/eksClusterRole" # replace with your ARN
 }
 
 variable "node_role_arn" {
   description = "IAM role ARN for EKS nodes"
   type        = string
-  default     = "arn:aws:iam::123456789012:role/eksNodeRole" # 👈 replace with your ARN
+  default     = "arn:aws:iam::123456789012:role/eksNodeRole" # replace with your ARN
 }

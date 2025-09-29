@@ -1,15 +1,9 @@
-variable "vpc_id" {
-  type = string
-}
+# Only fetch subnets if none are provided
+data "aws_subnets" "fetched" {
+  count = length(var.subnet_ids) > 0 ? 0 : 1
 
-variable "subnet_ids" {
-  type = list(string)
-}
-
-output "vpc_id" {
-  value = var.vpc_id
-}
-
-output "subnet_ids" {
-  value = var.subnet_ids
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
+  }
 }
