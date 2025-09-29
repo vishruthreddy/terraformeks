@@ -38,8 +38,7 @@ module "eks" {
   region          = var.region
 
   vpc_id          = module.vpc.vpc_id
-  subnet_ids      = module.vpc.subnet_ids
-
+  subnet_ids      = length(var.subnet_ids) > 0 ? var.subnet_ids : module.vpc.subnet_ids
+  node_role_arn   = module.iam.node_role_arn
   cluster_role_arn = module.iam.cluster_role_arn
-  node_role_arn    = module.iam.node_role_arn
 }
