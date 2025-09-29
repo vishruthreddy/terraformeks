@@ -1,4 +1,7 @@
-module "vpc" {
-  source = "./modules/vpc"
-  vpc_id = "vpc-5a863f32"  # your existing VPC
+# Fetch all subnets in the existing VPC
+data "aws_subnets" "existing" {
+  filter {
+    name   = "vpc-id"
+    values = [var.vpc_id]
+  }
 }
