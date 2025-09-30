@@ -3,7 +3,7 @@
 # -------------------------
 resource "aws_iam_role" "eks_cluster_role" {
   count = var.create_iam_roles ? 1 : 0
-  name  = "EKSClusterRole-TF3"
+  name  = "EKSClusterRole-TF4"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -36,7 +36,7 @@ resource "aws_iam_role_policy_attachment" "eks_service_policy" {
 # -------------------------
 resource "aws_iam_role" "eks_node_role" {
   count = var.create_iam_roles ? 1 : 0
-  name  = "EKSNodeRole-TF3"
+  name  = "EKSNodeRole-TF4"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
