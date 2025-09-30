@@ -24,14 +24,14 @@ module "vpc" {
 }
 
 # -------------------------
-# IAM Module (existing roles)
+# IAM Module (create roles in this account)
 # -------------------------
 module "iam" {
   source = "./modules/iam"
 
-  create_iam_roles = false
-  cluster_role_arn = var.cluster_role_arn
-  node_role_arn    = var.node_role_arn
+  create_iam_roles  = true   # ✅ Create roles instead of using cross-account roles
+  node_role_arn     = var.node_role_arn
+  cluster_role_arn  = var.cluster_role_arn
 }
 
 # -------------------------
