@@ -34,11 +34,12 @@ variable "subnet_ids" {
 variable "cluster_role_arn" {
   description = "IAM role ARN for EKS cluster"
   type        = string
-  default     = "arn:aws:iam::123456789012:role/eksClusterRole" # replace with your ARN
+  default     = "arn:aws:iam::046692759124:role/EKSClusterRole" 
 }
 
 variable "node_role_arn" {
   description = "IAM role ARN for EKS nodes"
   type        = string
-  default     = "arn:aws:iam::123456789012:role/eksNodeRole" # replace with your ARN
+  default     = "arn:aws:iam::046692759124:role/EKSNodeRole"
 }
+
