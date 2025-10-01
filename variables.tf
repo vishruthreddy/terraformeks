@@ -40,6 +40,6 @@ variable "cluster_role_arn" {
 variable "node_role_arn" {
   description = "IAM role ARN for EKS nodes"
   type        = string
-  default     = "arn:aws:iam::046692759124:role/EKSNodeRole"
+  default     = "arn:aws:iam::046692759124:role/EKSnodegrouprole"
 }
 
