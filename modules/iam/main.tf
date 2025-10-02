@@ -15,12 +15,6 @@ variable "create_iam_roles" {
   type        = bool
   default     = false
 }
-variable "iam_user" {
-  description = "IAM user to attach subnet tagging policy"
-  type        = string
-}
-
-
 # -------------------------
 # Outputs for EKS module
 # -------------------------
