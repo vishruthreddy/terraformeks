@@ -19,11 +19,11 @@ variable "vpc_id" {
   default     = "vpc-5a863f32"
 }
 
-/*variable "iam_user" {
+variable "iam_user" {
   description = "IAM user to attach subnet tagging policy"
   type        = string
   default     = "MCCLOUD-374"
-}*/
+}
 
 variable "subnet_ids" {
   description = "List of existing subnet IDs"

@@ -19,7 +19,7 @@ variable "cluster_name" {
 # -------------------------
 # Tag existing subnets for EKS
 # -------------------------
-/*resource "aws_ec2_tag" "eks_subnet_tags" {
+resource "aws_ec2_tag" "eks_subnet_tags" {
   for_each    = toset(var.subnet_ids)
   resource_id = each.key
   key         = "kubernetes.io/cluster/${var.cluster_name}"
@@ -31,7 +31,7 @@ resource "aws_ec2_tag" "eks_role_tag" {
   resource_id = each.key
   key         = "kubernetes.io/role/elb"
   value       = "1"
-}*/
+}
 
 # -------------------------
 # Outputs
