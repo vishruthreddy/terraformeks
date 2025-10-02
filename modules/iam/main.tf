@@ -1,12 +1,10 @@
-# IAM module for using existing EKS roles only
-
-variable "cluster_role_arn" {
-  description = "IAM role ARN for EKS cluster"
+variable "cluster_role_name" {
+  description = "IAM role name for EKS cluster"
   type        = string
 }
 
-variable "node_role_arn" {
-  description = "IAM role ARN for EKS node group"
+variable "node_role_name" {
+  description = "IAM role name for EKS node group"
   type        = string
 }
 
@@ -43,21 +41,21 @@ resource "aws_iam_policy" "view_eks_nodes" {
   })
 }
 
-# Attach the policy to the existing node role
+# Attach the policy to the existing node role (name is passed from root)
 resource "aws_iam_role_policy_attachment" "attach_view_eks_nodes" {
-  role       = var.node_role_arn
+  role       = var.node_role_name
   policy_arn = aws_iam_policy.view_eks_nodes.arn
 }
 
 # -------------------------
 # Outputs for EKS module
 # -------------------------
-output "cluster_role_arn" {
-  value       = var.cluster_role_arn
-  description = "ARN of the existing EKS cluster role"
+output "cluster_role_name" {
+  value       = var.cluster_role_name
+  description = "IAM role name of the existing EKS cluster role"
 }
 
-output "node_role_arn" {
-  value       = var.node_role_arn
-  description = "ARN of the existing EKS node group role"
+output "node_role_name" {
+  value       = var.node_role_name
+  description = "IAM role name of the existing EKS node group role"
 }
