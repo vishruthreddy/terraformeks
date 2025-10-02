@@ -26,6 +26,7 @@ variable "subnet_ids" {
     "subnet-e6932a8e",
     "subnet-3145b44b"
   ]
+  
 }
 
 # -------------------------

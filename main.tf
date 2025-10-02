@@ -21,6 +21,7 @@ module "vpc" {
 
   vpc_id     = var.vpc_id
   subnet_ids = var.subnet_ids
+  cluster_name = var.cluster_name  
 }
 
 # -------------------------
