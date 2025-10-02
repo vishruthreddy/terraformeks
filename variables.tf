@@ -16,15 +16,15 @@ variable "cluster_name" {
 variable "vpc_id" {
   description = "Existing VPC ID"
   type        = string
-  default     = "vpc-00bc9c2ba13489eeb"
+  default     = "vpc-5a863f32"
 }
 
 variable "subnet_ids" {
   description = "List of existing subnet IDs"
   type        = list(string)
   default     = [
-    "subnet-0cfe7c67415e888cc",
-    "subnet-02ab96457959e52b4"
+    "subnet-e6932a8e",
+    "subnet-3145b44b"
   ]
 }
 
