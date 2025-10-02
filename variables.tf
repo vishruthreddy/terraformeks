@@ -19,6 +19,12 @@ variable "vpc_id" {
   default     = "vpc-5a863f32"
 }
 
+variable "iam_user" {
+  description = "IAM user to attach subnet tagging policy"
+  type        = string
+  default     = "MCCLOUD-374"
+}
+
 variable "subnet_ids" {
   description = "List of existing subnet IDs"
   type        = list(string)
@@ -43,4 +49,5 @@ variable "node_role_arn" {
   type        = string
   default     = "arn:aws:iam::046692759124:role/EKSnodegrouprole"
 }
+
 
