@@ -19,9 +19,9 @@ provider "aws" {
 module "vpc" {
   source = "./modules/vpc"
 
-  vpc_id     = var.vpc_id
-  subnet_ids = var.subnet_ids
-  cluster_name = var.cluster_name  
+  vpc_id       = var.vpc_id
+  subnet_ids   = var.subnet_ids
+  cluster_name = var.cluster_name
 }
 
 # -------------------------
@@ -48,4 +48,6 @@ module "eks" {
   subnet_ids       = module.vpc.subnet_ids
   cluster_role_arn = module.iam.cluster_role_arn
   node_role_arn    = module.iam.node_role_arn
+
 }
+
