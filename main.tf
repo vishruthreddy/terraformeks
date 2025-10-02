@@ -33,9 +33,8 @@ module "iam" {
   create_iam_roles  = false  # ❌ Do NOT create roles
   cluster_role_arn  = var.cluster_role_arn
   node_role_arn     = var.node_role_arn
-  iam_user          = var.iam_user
 }
-
+# iam_user          = var.iam_user
 # -------------------------
 # EKS Cluster Module
 # -------------------------
