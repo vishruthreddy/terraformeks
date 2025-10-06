@@ -42,11 +42,12 @@ resource "aws_iam_policy" "eks_policy_permissions" {
 # ----------------------------------------
 # Attach the policy to the existing cluster role
 # ----------------------------------------
-resource "aws_iam_role_policy_attachment" "attach_eks_policy_permissions" {
-  count      = var.create_iam_roles == false ? 1 : 0
-  role       = basename(var.cluster_role_arn)
+# Attach the policy to the Terraform execution user
+resource "aws_iam_user_policy_attachment" "attach_eks_policy_permissions_to_user" {
+  user       = "MCCLOUD-374"  # Terraform user
   policy_arn = aws_iam_policy.eks_policy_permissions.arn
 }
+
 
 # ----------------------------------------
 # Outputs for EKS module
