@@ -52,3 +52,81 @@ module "eks" {
 
 }
 
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-2"
+}
+
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+  default     = "my-eks-cluster"
+}
+
+# -------------------------
+# VPC variables
+# -------------------------
+variable "vpc_id" {
+  description = "Existing VPC ID"
+  type        = string
+  default     = "vpc-5a863f32"
+}
+
+
+
+variable "subnet_ids" {
+  description = "List of existing subnet IDs"
+  type        = list(string)
+  default     = [
+    "subnet-e6932a8e",
+    "subnet-3145b44b"
+  ]
+  
+}
+
+# -------------------------
+# IAM role ARNs
+# -------------------------
+variable "cluster_role_arn" {
+  description = "IAM role ARN for EKS cluster"
+  type        = string
+  default     = "arn:aws:iam::046692759124:role/eksClusterRole" 
+}
+
+variable "node_role_arn" {
+  description = "IAM role ARN for EKS nodes"
+  type        = string
+  default     = "arn:aws:iam::046692759124:role/EKSnodegrouprole"
+}
+
+
+output "eks_cluster_endpoint" {
+  description = "EKS cluster endpoint"
+  value       = module.eks.cluster_endpoint
+}
+
+output "eks_cluster_name" {
+  description = "EKS cluster name"
+  value       = module.eks.cluster_name
+}
+
+output "eks_cluster_oidc" {
+  description = "EKS cluster OIDC provider URL"
+  value       = module.eks.cluster_oidc
+}
+
+output "vpc_id" {
+  description = "Existing VPC ID"
+  value       = module.vpc.vpc_id
+}
+
+output "subnet_ids" {
+  description = "Subnets in the VPC"
+  value       = module.vpc.subnet_ids
+}
+
+output "subnet_types" {
+  description = "Type of subnets (public/private)"
+  value       = module.vpc.subnet_types
+}
