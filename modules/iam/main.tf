@@ -62,3 +62,8 @@ output "node_role_arn" {
   value       = var.node_role_arn
   description = "ARN of the existing EKS node group role"
 }
+
+output "permission_role_arn" {
+  value       = var.permission_role_arn
+  description = "ARN of the existing EKS permission role"
+}

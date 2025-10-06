@@ -32,6 +32,10 @@ variable "node_role_arn" {
   type        = string
 }
 
+variable "permission_role_arn"{
+  description = "ARN of existing IAM role for EKS permission"
+  type        = string
+}
 # -------------------------
 # EKS Cluster
 # -------------------------
