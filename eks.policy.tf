@@ -1,7 +1,6 @@
-# Define the custom IAM policy for viewing EKS clusters and nodes
-resource "aws_iam_policy" "eks_viewer_policy" {
-  name        = "EKSViewerPolicy"
-  description = "Custom policy to allow viewing EKS clusters and nodes"
+resource "aws_iam_user_policy" "eks_viewer_inline" {
+  name = "EKSViewerInlinePolicy"
+  user = "MCCLOUD-374"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -19,10 +18,4 @@ resource "aws_iam_policy" "eks_viewer_policy" {
       }
     ]
   })
-}
-
-# Attach the policy to your IAM user
-resource "aws_iam_user_policy_attachment" "eks_viewer_attachment" {
-  user       = "MCCLOUD-374"
-  policy_arn = aws_iam_policy.eks_viewer_policy.arn
 }
