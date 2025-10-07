@@ -100,12 +100,6 @@ variable "node_role_arn" {
   default     = "arn:aws:iam::046692759124:role/EKSnodegrouprole"
 }
 
-variable "permission_role_arn" {
-  description = "IAM role ARN for EKS nodes"
-  type        = string
-  default     = "arn:aws:iam::046692759124:role/EKSVishrutPolicy"
-}
-
 output "eks_cluster_endpoint" {
   description = "EKS cluster endpoint"
   value       = module.eks.cluster_endpoint
