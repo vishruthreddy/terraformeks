@@ -16,6 +16,18 @@ variable "create_iam_roles" {
   type        = bool
   default     = false
 }
+
+resource "aws_iam_policy" "eks_policy_permissions" {
+  name        = "eks-policy-permissions"
+  description = "Policy for EKS Terraform operations"
+  policy      = file("eks-policy-permissions.json")
+}
+
+resource "aws_iam_user_policy_attachment" "attach_policy" {
+  user       = "MCCLOUD-374"
+  policy_arn = aws_iam_policy.eks_policy_permissions.arn
+}
+
 # ----------------------------------------
 # Outputs for EKS module
 # ----------------------------------------
