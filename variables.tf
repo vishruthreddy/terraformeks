@@ -19,13 +19,13 @@ variable "cluster_name" {
 variable "vpc_id" {
   description = "Existing VPC ID (leave empty to create new VPC)"
   type        = string
-  default     = ""
+  default     = "vpc-5a863f32"
 }
 
 variable "subnet_ids" {
   description = "List of existing subnet IDs (leave empty to create new subnets)"
   type        = list(string)
-  default     = []
+  default     = ["subnet-e6932a8e", "subnet-3145b44b"]
 }
 
 # -------------------------
