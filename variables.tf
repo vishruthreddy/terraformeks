@@ -19,13 +19,13 @@ variable "cluster_name" {
 variable "vpc_id" {
   description = "Existing VPC ID (leave empty to create a new VPC)"
   type        = string
-  default     = ""   # empty string indicates create new
+  default     = "vpc-5a863f32"   # empty string indicates create new
 }
 
 variable "subnet_ids" {
   description = "List of existing subnet IDs (leave empty to create new subnets)"
   type        = list(string)
-  default     = []   # empty list indicates create new
+  default     = ["subnet-e6932a8e", "subnet-3145b44b"]   # empty list indicates create new
 }
 
 variable "cidr_block" {
@@ -46,13 +46,13 @@ variable "azs" {
 variable "cluster_role_arn" {
   description = "Existing IAM role ARN for EKS cluster (leave empty to create new)"
   type        = string
-  default     = "" 
+  default     = "arn:aws:iam::046692759124:role/eksClusterRole"  
 }
 
 variable "node_role_arn" {
   description = "Existing IAM role ARN for EKS nodes (leave empty to create new)"
   type        = string
-  default     = ""
+  default     = "arn:aws:iam::046692759124:role/EKSnodegrouprole"
 }
 
 variable "create_iam_roles" {
