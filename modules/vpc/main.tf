@@ -1,32 +1,26 @@
 # -------------------------
-# Variables
+# Create new VPC (only if vpc_id not provided)
 # -------------------------
-variable "vpc_id" {
-  description = "ID of the existing VPC to use"
-  type        = string
-}
+resource "aws_vpc" "this" {
+  count = var.vpc_id == "" ? 1 : 0
 
-variable "subnet_ids" {
-  description = "List of existing subnet IDs"
-  type        = list(string)
-}
-
-variable "cluster_name" {
-  description = "Name of the EKS cluster"
-  type        = string
+  cidr_block = var.cidr_block
+  tags = {
+    Name = "${var.cluster_name}-vpc"
+  }
 }
 
 # -------------------------
-# Outputs
+# Create new subnets (only if subnet_ids not provided)
 # -------------------------
-output "vpc_id" {
-  value = var.vpc_id
+resource "aws_subnet" "this" {
+  count = length(var.subnet_ids) == 0 ? length(var.azs) : 0
+
+  vpc_id            = aws_vpc.this[0].id
+  cidr_block        = cidrsubnet(var.cidr_block, 8, count.index)
+  availability_zone = var.azs[count.index]
+  tags = {
+    Name = "${var.cluster_name}-subnet-${count.index}"
+  }
 }
 
-output "subnet_ids" {
-  value = var.subnet_ids
-}
-
-output "subnet_types" {
-  value = { for s in var.subnet_ids : s => "public" }
-}

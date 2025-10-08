@@ -1,0 +1,35 @@
+# -------------------------
+# EKS outputs
+# -------------------------
+output "eks_cluster_endpoint" {
+  description = "EKS cluster endpoint"
+  value       = module.eks.cluster_endpoint
+}
+
+output "eks_cluster_name" {
+  description = "EKS cluster name"
+  value       = module.eks.cluster_name
+}
+
+output "eks_cluster_oidc" {
+  description = "EKS cluster OIDC provider URL"
+  value       = module.eks.cluster_oidc
+}
+
+# -------------------------
+# VPC outputs
+# -------------------------
+output "vpc_id" {
+  description = "VPC ID used by EKS"
+  value       = module.vpc.vpc_id
+}
+
+output "subnet_ids" {
+  description = "Subnets used by EKS"
+  value       = module.vpc.subnet_ids
+}
+
+output "subnet_types" {
+  description = "Type of subnets (public/private)"
+  value       = module.vpc.subnet_types
+}
