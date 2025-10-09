@@ -54,7 +54,7 @@ resource "aws_iam_role_policy_attachment" "node_role_attach" {
 resource "aws_iam_role_policy_attachment" "node_cni_attach" {
   count      = var.create_iam_roles && var.node_role_arn == "" ? 1 : 0
   role       = aws_iam_role.node_role[0].name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSCNIPolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
 resource "aws_iam_role_policy_attachment" "node_registry_attach" {
