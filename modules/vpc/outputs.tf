@@ -12,3 +12,4 @@ output "subnet_ids" {
 output "subnet_types" {
   value = { for s in length(var.subnet_ids) > 0 ? var.subnet_ids : aws_subnet.this[*].id : s => "public" }
 }
+
