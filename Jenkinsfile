@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = "us-east-2"
-        AWS_CREDENTIALS_ID = "aws-jenkins"   // the Jenkins credential ID you created
-        TF_WORKING_DIR     = "."           // root of your terraformeks repo
+        AWS_CREDENTIALS_ID = "aws-jenkins"   // Jenkins credential ID
+        TF_WORKING_DIR     = "."             // Root of terraformeks repo
     }
 
     options {
@@ -39,77 +39,78 @@ pipeline {
         }
 
         stage('Terraform Validate & Format') {
-    steps {
-        dir("${TF_WORKING_DIR}") {
-            // Run terraform fmt, but ignore warnings (non-zero exit due to version notice)
-            sh 'terraform fmt -check || true'
-            
-            // Run terraform validate, fail if actual errors occur
-            sh '''
-            terraform validate
-            if [ $? -ne 0 ]; then
-                echo "Terraform validation failed!"
-                exit 1
-            fi
-            '''
-        }
-    }
-}
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh '''
+                        echo "Running terraform fmt..."
+                        terraform fmt -check || true
 
+                        echo "Running terraform validate..."
+                        terraform validate
+                        if [ $? -ne 0 ]; then
+                            echo "Terraform validation failed!"
+                            exit 1
+                        fi
+                    '''
+                }
+            }
+        }
 
         stage('Terraform Plan') {
-    steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
-            dir("${TF_WORKING_DIR}") {
-                sh '''
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+                    dir("${TF_WORKING_DIR}") {
+                        sh '''
+                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                            export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
 
-                    terraform plan -out=tfplan
-                '''
+                            echo "Running terraform plan..."
+                            terraform plan -out=tfplan
+                        '''
+                    }
+                }
             }
         }
-    }
-}
 
         stage('Terraform Apply') {
-    steps {
-        input message: "Approve Terraform Apply?", ok: "Apply"
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
-            dir("${TF_WORKING_DIR}") {
-                sh '''
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+            steps {
+                input message: "Approve Terraform Apply?", ok: "Apply"
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+                    dir("${TF_WORKING_DIR}") {
+                        sh '''
+                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                            export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
 
-                    terraform apply -auto-approve tfplan
-                '''
+                            echo "Applying terraform changes..."
+                            terraform apply -auto-approve tfplan
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Verify EKS Cluster') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+                    dir("${TF_WORKING_DIR}") {
+                        sh '''
+                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                            export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+
+                            echo "Verifying EKS cluster connectivity..."
+                            aws sts get-caller-identity
+
+                            aws eks update-kubeconfig --name my-eks-cluster --region ${AWS_DEFAULT_REGION}
+                            kubectl get nodes -o wide
+                        '''
+                    }
+                }
             }
         }
     }
-}
-
-       stage('Verify EKS Cluster') {
-    steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
-            dir("${TF_WORKING_DIR}") {
-                sh '''
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-
-                    echo "Verifying EKS cluster connectivity..."
-                    aws sts get-caller-identity
-
-                    aws eks update-kubeconfig --name my-eks-cluster --region ${AWS_DEFAULT_REGION}
-                    kubectl get nodes -o wide
-                '''
-            }
-        }
-    }
-}
-
 
     post {
         always {
@@ -117,10 +118,10 @@ pipeline {
             cleanWs()
         }
         success {
-            echo "Terraform applied successfully!"
+            echo "✅ Terraform applied successfully!"
         }
         failure {
-            echo "Pipeline failed! Check logs."
+            echo "❌ Pipeline failed! Check logs for details."
         }
     }
 }
