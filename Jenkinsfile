@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = "us-east-2"
-        AWS_CREDENTIALS_ID = "aws-creds"   // the Jenkins credential ID you created
+        AWS_CREDENTIALS_ID = "aws-jenkins"   // the Jenkins credential ID you created
         TF_WORKING_DIR     = "."           // root of your terraformeks repo
     }
 
