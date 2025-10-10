@@ -90,18 +90,26 @@ pipeline {
     }
 }
 
-        stage('Verify EKS Cluster') {
-            steps {
-                dir("${TF_WORKING_DIR}") {
-                    sh '''
-                        aws eks update-kubeconfig --name my-eks-cluster --region ${AWS_DEFAULT_REGION}
-                        kubectl get nodes -o wide
-                    '''
-                }
+       stage('Verify EKS Cluster') {
+    steps {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+            dir("${TF_WORKING_DIR}") {
+                sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+
+                    echo "Verifying EKS cluster connectivity..."
+                    aws sts get-caller-identity
+
+                    aws eks update-kubeconfig --name my-eks-cluster --region ${AWS_DEFAULT_REGION}
+                    kubectl get nodes -o wide
+                '''
             }
         }
-
     }
+}
+
 
     post {
         always {
