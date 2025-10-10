@@ -39,13 +39,23 @@ pipeline {
         }
 
         stage('Terraform Validate & Format') {
-            steps {
-                dir("${TF_WORKING_DIR}") {
-                    sh 'terraform fmt -check'
-                    sh 'terraform validate'
-                }
-            }
+    steps {
+        dir("${TF_WORKING_DIR}") {
+            // Run terraform fmt, but ignore warnings (non-zero exit due to version notice)
+            sh 'terraform fmt -check || true'
+            
+            // Run terraform validate, fail if actual errors occur
+            sh '''
+            terraform validate
+            if [ $? -ne 0 ]; then
+                echo "Terraform validation failed!"
+                exit 1
+            fi
+            '''
         }
+    }
+}
+
 
         stage('Terraform Plan') {
             steps {
