@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = "us-east-2"
-        AWS_CREDENTIALS_ID = "aws-creds"   // the Jenkins credential ID you created
+        AWS_CREDENTIALS_ID = "aws-jenkins"   // the Jenkins credential ID you created
         TF_WORKING_DIR     = "."           // root of your terraformeks repo
     }
 
@@ -58,38 +58,21 @@ pipeline {
 
 
         stage('Terraform Plan') {
-    steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
-            dir("${TF_WORKING_DIR}") {
-                sh '''
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-
-                    terraform plan -out=tfplan
-                '''
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh 'terraform plan -out=tfplan'
+                }
             }
         }
-    }
-}
 
-stage('Terraform Apply') {
-    steps {
-        input message: "Approve Terraform Apply?", ok: "Apply"
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
-            dir("${TF_WORKING_DIR}") {
-                sh '''
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-
-                    terraform apply -auto-approve tfplan
-                '''
+        stage('Terraform Apply') {
+            steps {
+                input message: "Approve Terraform Apply?", ok: "Apply"
+                dir("${TF_WORKING_DIR}") {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
             }
         }
-    }
-}
-
 
         stage('Verify EKS Cluster') {
             steps {
