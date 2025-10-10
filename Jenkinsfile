@@ -29,6 +29,24 @@ pipeline {
                 }
             }
         }
+        
+        stage('Terraform Destroy') {
+    steps {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+            dir("${TF_WORKING_DIR}") {
+                sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+
+                    terraform plan -destroy -out=tf-destroy-plan
+                    terraform apply -auto-approve tf-destroy-plan
+                '''
+            }
+        }
+    }
+}
+
 
         stage('Terraform Init') {
             steps {
