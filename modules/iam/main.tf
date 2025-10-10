@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "node_assume_role_policy" {
 # ----------------------------------------
 resource "aws_iam_role" "cluster_role" {
   count              = var.create_iam_roles && var.cluster_role_arn == "" ? 1 : 0
-  name               = "eks-cluster-role"
+  name               = "eks-cluster-role1"
   assume_role_policy = data.aws_iam_policy_document.cluster_assume_role_policy.json
 }
 
@@ -41,7 +41,7 @@ resource "aws_iam_role_policy_attachment" "cluster_role_attach" {
 # ----------------------------------------
 resource "aws_iam_role" "node_role" {
   count              = var.create_iam_roles && var.node_role_arn == "" ? 1 : 0
-  name               = "eks-node-role"
+  name               = "eks-node-role1"
   assume_role_policy = data.aws_iam_policy_document.node_assume_role_policy.json
 }
 
