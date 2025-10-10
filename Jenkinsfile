@@ -29,8 +29,14 @@ pipeline {
                 }
             }
         }
-        
-        stage('Terraform Destroy') {
+        stage('Terraform Init') {
+            steps {
+                dir("${TF_WORKING_DIR}") {
+                    sh 'terraform init -input=false'
+                }
+            }
+        }
+ stage('Terraform Destroy') {
     steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
             dir("${TF_WORKING_DIR}") {
@@ -46,16 +52,6 @@ pipeline {
         }
     }
 }
-
-
-        stage('Terraform Init') {
-            steps {
-                dir("${TF_WORKING_DIR}") {
-                    sh 'terraform init -input=false'
-                }
-            }
-        }
-
         stage('Terraform Validate & Format') {
             steps {
                 dir("${TF_WORKING_DIR}") {
