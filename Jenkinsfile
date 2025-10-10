@@ -22,21 +22,39 @@ pipeline {
             }
         }
 
-        stage('Setup AWS Credentials') {
-            steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
-                    sh 'aws sts get-caller-identity'
-                }
-            }
-        }
+        stage('Terraform Plan') {
+    steps {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+            dir("${TF_WORKING_DIR}") {
+                sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
 
-        stage('Terraform Init') {
-            steps {
-                dir("${TF_WORKING_DIR}") {
-                    sh 'terraform init -input=false'
-                }
+                    terraform plan -out=tfplan
+                '''
             }
         }
+    }
+}
+
+stage('Terraform Apply') {
+    steps {
+        input message: "Approve Terraform Apply?", ok: "Apply"
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+            dir("${TF_WORKING_DIR}") {
+                sh '''
+                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+
+                    terraform apply -auto-approve tfplan
+                '''
+            }
+        }
+    }
+}
+
 
         stage('Terraform Validate & Format') {
     steps {
