@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = "us-east-2"
-        AWS_CREDENTIALS_ID = "aws-jenkins"   // Jenkins credential ID
-        TF_WORKING_DIR     = "."             // Root of terraformeks repo
+        AWS_CREDENTIALS_ID = "aws-jenkins"
+        TF_WORKING_DIR     = "."
     }
 
     options {
@@ -29,6 +29,7 @@ pipeline {
                 }
             }
         }
+
         stage('Terraform Init') {
             steps {
                 dir("${TF_WORKING_DIR}") {
@@ -36,22 +37,7 @@ pipeline {
                 }
             }
         }
- stage('Terraform Destroy') {
-    steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
-            dir("${TF_WORKING_DIR}") {
-                sh '''
-                    export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                    export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                    export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
 
-                    terraform plan -destroy -out=tf-destroy-plan
-                    terraform apply -auto-approve tf-destroy-plan
-                '''
-            }
-        }
-    }
-}
         stage('Terraform Validate & Format') {
             steps {
                 dir("${TF_WORKING_DIR}") {
@@ -130,6 +116,20 @@ pipeline {
         always {
             echo "Cleaning workspace..."
             cleanWs()
+
+            echo "Destroying Terraform-managed infrastructure..."
+            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${AWS_CREDENTIALS_ID}"]]) {
+                dir("${TF_WORKING_DIR}") {
+                    sh '''
+                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                        export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+
+                        terraform plan -destroy -out=tf-destroy-plan
+                        terraform apply -auto-approve tf-destroy-plan
+                    '''
+                }
+            }
         }
         success {
             echo "✅ Terraform applied successfully!"
